@@ -1,6 +1,6 @@
 import { Mountain } from "lucide-react";
 import { FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
-
+import logo from '../assets/l2.png'
 export default function Footer() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -13,10 +13,12 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div data-testid="footer-brand">
             <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <Mountain className="text-background text-lg" />
-              </div>
-              <span className="text-xl font-bold">BlueHawk Group</span>
+            
+              <img
+                src={logo}
+                alt="BlueHawk Group Logo"
+                className="w-60 h-15"
+              />
             </div>
             <p className="text-muted-foreground">India's largest quartz supplier with access to premium mines nationwide.</p>
           </div>
