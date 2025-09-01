@@ -94,7 +94,12 @@ export class MemStorage implements IStorage {
 
     sampleMines.forEach(mine => {
       const id = randomUUID();
-      const fullMine: Mine = { ...mine, id };
+      const fullMine: Mine = { 
+        ...mine, 
+        id,
+        purity: mine.purity ?? null,
+        isActive: mine.isActive ?? 1
+      };
       this.mines.set(id, fullMine);
     });
   }
@@ -126,7 +131,12 @@ export class MemStorage implements IStorage {
 
   async createMine(insertMine: InsertMine): Promise<Mine> {
     const id = randomUUID();
-    const mine: Mine = { ...insertMine, id };
+    const mine: Mine = { 
+      ...insertMine, 
+      id,
+      purity: insertMine.purity ?? null,
+      isActive: insertMine.isActive ?? 1
+    };
     this.mines.set(id, mine);
     return mine;
   }
