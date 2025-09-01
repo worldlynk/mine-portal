@@ -31,9 +31,6 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Expose port
-EXPOSE 10000
-
 # Set environment variables
 ENV NODE_ENV=production
 ENV PORT=10000
