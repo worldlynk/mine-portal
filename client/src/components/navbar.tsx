@@ -37,7 +37,7 @@ export default function Navbar() {
             <img
               src={logo}
               alt="BlueHawk Group Logo"
-              className="w-45 h-13.25"/* grow by height */
+              className="w-33 h-13"/* grow by height */
               data-testid="logo-image"
               />
             {/* <span className="text-xl font-bold text-foreground">
