@@ -1,0 +1,16 @@
+# Render Deployment Configuration
+# This file tells Render how to build and run your app
+
+# Build Command
+buildCommand: "npm run build"
+
+# Start Command  
+startCommand: "npm start"
+
+# Node Version
+nodeVersion: "20"
+
+# Environment Variables (set these in Render dashboard)
+# DATABASE_URL=your_supabase_connection_string
+# NODE_ENV=production
+# PORT=10000

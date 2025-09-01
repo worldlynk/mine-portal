@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueHawk Group - Premier Quartz Mining Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                },
+                fontFamily: {
+                    sans: ["var(--font-sans)"],
+                }
+            },
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --background: hsl(222 84% 5%);
+            --foreground: hsl(210 40% 98%);
+            --card: hsl(222 84% 8%);
+            --card-foreground: hsl(210 40% 98%);
+            --popover: hsl(222 84% 8%);
+            --popover-foreground: hsl(210 40% 98%);
+            --primary: hsl(43 96% 56%);
+            --primary-foreground: hsl(222 84% 5%);
+            --secondary: hsl(217 32% 17%);
+            --secondary-foreground: hsl(210 40% 98%);
+            --muted: hsl(217 32% 17%);
+            --muted-foreground: hsl(215 20% 65%);
+            --accent: hsl(43 96% 56%);
+            --accent-foreground: hsl(222 84% 5%);
+            --destructive: hsl(0 62% 30%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(217 32% 17%);
+            --input: hsl(217 32% 17%);
+            --ring: hsl(43 96% 56%);
+            --radius: 0.75rem;
+            --font-sans: 'Inter', system-ui, sans-serif;
+        }
+
+        * {
+            border-color: hsl(var(--border));
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+
+        /* Loading Screen & Door Animation */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: hsl(var(--background));
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .door-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .door-left, .door-right {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--background)) 100%);
+            transition: transform 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .door-left {
+            left: 0;
+            transform-origin: left;
+        }
+
+        .door-right {
+            right: 0;
+            transform-origin: right;
+        }
+
+        .door-container.open .door-left {
+            transform: translateX(-100%);
+        }
+
+        .door-container.open .door-right {
+            transform: translateX(100%);
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+            opacity: 0;
+            animation: logoFadeIn 1s ease-in-out 0.5s forwards;
+        }
+
+        .logo-text {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, hsl(var(--primary)), hsl(var(--accent)));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .logo-subtitle {
+            color: hsl(var(--muted-foreground));
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        @keyframes logoFadeIn {
+            from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: hsl(var(--background));
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: hsl(var(--primary));
+            border-radius: 4px;
+        }
+
+        /* Gradient overlays */
+        .gradient-overlay {
+            background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--secondary)) 50%, hsl(var(--background)) 100%);
+        }
+
+        /* Mine card hover effects */
+        .mine-card {
+            transition: all 0.3s ease;
+        }
+
+        .mine-card:hover {
+            transform: translateY(-8px);
+        }
+
+        /* Statistics counter animation */
+        .stat-number {
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Professional button styling */
+        .btn-primary {
+            background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Navigation blur effect */
+        .nav-blur {
+            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Content reveal animation */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .reveal-up.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Loading Screen with Door Animation -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="door-container" id="doorContainer">
+            <div class="door-left"></div>
+            <div class="door-right"></div>
+            <div class="logo-container">
+                <div class="logo-text">BLUEHAWK</div>
+                <div class="logo-subtitle">PREMIUM QUARTZ SOLUTIONS</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-blur transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                        <i class="fas fa-mountain text-background text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold text-foreground">BlueHawk Group</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-muted-foreground hover:text-primary transition-colors">Home</a>
+                    <a href="#about" class="text-muted-foreground hover:text-primary transition-colors">About</a>
+                    <a href="#mines" class="text-muted-foreground hover:text-primary transition-colors">Our Mines</a>
+                    <a href="#contact" class="text-muted-foreground hover:text-primary transition-colors">Contact</a>
+                </div>
+
+                <button class="btn-primary px-6 py-2 rounded-lg text-primary-foreground font-semibold">
+                    Get Quote
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center relative overflow-hidden">
+        <!-- Industrial mining background with heavy machinery -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080" 
+                 alt="Modern mining operation with heavy machinery" 
+                 class="w-full h-full object-cover opacity-30">
+            <div class="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="max-w-4xl">
+                <div class="reveal-up">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                        India's <span class="text-primary">Largest</span><br>
+                        Quartz <span class="text-accent">Supplier</span>
+                    </h1>
+                    
+                    <p class="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
+                        Access to every possible mine across India. Premium quality quartz solutions 
+                        for industries that demand excellence.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mb-12">
+                        <button class="btn-primary px-8 py-4 rounded-lg text-primary-foreground font-semibold text-lg">
+                            <i class="fas fa-gem mr-2"></i>
+                            Explore Our Mines
+                        </button>
+                        <button class="border-2 border-primary text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-primary-foreground transition-all">
+                            <i class="fas fa-phone mr-2"></i>
+                            Contact Us
+                        </button>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="stat-number text-3xl font-bold text-primary mb-2">500+</div>
+                            <div class="text-muted-foreground">Mine Locations</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="stat-number text-3xl font-bold text-primary mb-2">25+</div>
+                            <div class="text-muted-foreground">Years Experience</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="stat-number text-3xl font-bold text-primary mb-2">1000+</div>
+                            <div class="text-muted-foreground">Satisfied Clients</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="stat-number text-3xl font-bold text-primary mb-2">#1</div>
+                            <div class="text-muted-foreground">Market Leader</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 gradient-overlay">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="reveal-up text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        Unmatched <span class="text-primary">Industry Leadership</span>
+                    </h2>
+                    <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                        BlueHawk Group stands as India's premier quartz mining conglomerate, 
+                        with exclusive access to the nation's finest mineral deposits.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="reveal-up">
+                        <!-- Modern quartz crystal formation in industrial setting -->
+                        <img src="https://pixabay.com/get/geb04af8ee2de66fd166f3ddb546eb3dfa90f037ed1787c9a57479fd2993bb52aee52d2b8aca2bc3caff1692f6af57d1720a447725fae0c8cced44657ac5dd8af_1280.jpg" 
+                             alt="Beautiful quartz crystal formations" 
+                             class="rounded-2xl shadow-2xl w-full">
+                    </div>
+                    
+                    <div class="reveal-up space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-award text-primary-foreground text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Industry Excellence</h3>
+                                <p class="text-muted-foreground">Over two decades of mining expertise with cutting-edge extraction technologies.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-globe text-primary-foreground text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">National Coverage</h3>
+                                <p class="text-muted-foreground">Strategic partnerships with mine owners across all major quartz-producing regions in India.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-certificate text-primary-foreground text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Quality Assurance</h3>
+                                <p class="text-muted-foreground">ISO certified processes ensuring the highest grade quartz for industrial applications.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mines Showcase -->
+    <section id="mines" class="py-20 bg-card">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16 reveal-up">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                    Our <span class="text-primary">Premium Mines</span>
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
+                    Exclusive access to India's finest quartz deposits across multiple states, 
+                    ensuring consistent supply and superior quality.
+                </p>
+            </div>
+
+            <!-- Mine Categories -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12 reveal-up">
+                <button class="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold" data-category="all">All Mines</button>
+                <button class="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-all" data-category="rajasthan">Rajasthan</button>
+                <button class="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-all" data-category="gujarat">Gujarat</button>
+                <button class="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-all" data-category="madhya-pradesh">Madhya Pradesh</button>
+                <button class="px-6 py-3 bg-secondary text-secondary-foreground rounded-lg font-semibold hover:bg-primary hover:text-primary-foreground transition-all" data-category="jharkhand">Jharkhand</button>
+            </div>
+
+            <!-- Mine Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Mine Card 1 -->
+                <div class="mine-card bg-background border border-border rounded-2xl overflow-hidden hover:border-primary reveal-up" data-category="rajasthan">
+                    <!-- Rajasthan desert mine with equipment -->
+                    <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" 
+                         alt="Desert mining operation in Rajasthan" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-semibold">Rajasthan Prime</h3>
+                            <span class="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">Premium</span>
+                        </div>
+                        <p class="text-muted-foreground mb-4">High-grade silica quartz with 99.7% purity. Ideal for glass and semiconductor industries.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-muted-foreground">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Udaipur, Rajasthan
+                            </div>
+                            <button class="text-primary hover:text-accent transition-colors">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mine Card 2 -->
+                <div class="mine-card bg-background border border-border rounded-2xl overflow-hidden hover:border-primary reveal-up" data-category="gujarat">
+                    <!-- Gujarat coastal mining operation -->
+                    <img src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" 
+                         alt="Coastal mining facility in Gujarat" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-semibold">Gujarat Coastal</h3>
+                            <span class="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-medium">Elite</span>
+                        </div>
+                        <p class="text-muted-foreground mb-4">Finest quality white quartz perfect for luxury countertops and architectural applications.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-muted-foreground">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Bhuj, Gujarat
+                            </div>
+                            <button class="text-primary hover:text-accent transition-colors">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mine Card 3 -->
+                <div class="mine-card bg-background border border-border rounded-2xl overflow-hidden hover:border-primary reveal-up" data-category="madhya-pradesh">
+                    <!-- Central India mining with heavy machinery -->
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" 
+                         alt="Large scale mining operation in Central India" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-semibold">Central India Hub</h3>
+                            <span class="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium">Premium</span>
+                        </div>
+                        <p class="text-muted-foreground mb-4">Large-scale extraction facility providing consistent supply for industrial manufacturing.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-muted-foreground">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Bhopal, Madhya Pradesh
+                            </div>
+                            <button class="text-primary hover:text-accent transition-colors">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mine Card 4 -->
+                <div class="mine-card bg-background border border-border rounded-2xl overflow-hidden hover:border-primary reveal-up" data-category="jharkhand">
+                    <!-- Jharkhand forest mining operation -->
+                    <img src="https://pixabay.com/get/g0382c6338eca98ad522f57e4a50874396afcde1dcfdf78c6ed76742378c5c05ef0d8a6e95ac5ec17489554dddb5f0d6137e4cf90e81f6833b2a39a00c2700d43_1280.jpg" 
+                         alt="Mining operation in forested hills of Jharkhand" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-semibold">Jharkhand Reserve</h3>
+                            <span class="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">Premium</span>
+                        </div>
+                        <p class="text-muted-foreground mb-4">Rich mineral deposits with exceptional clarity, perfect for optical and electronic components.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-muted-foreground">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Ranchi, Jharkhand
+                            </div>
+                            <button class="text-primary hover:text-accent transition-colors">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mine Card 5 -->
+                <div class="mine-card bg-background border border-border rounded-2xl overflow-hidden hover:border-primary reveal-up" data-category="rajasthan">
+                    <!-- Another Rajasthan mine with different landscape -->
+                    <img src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" 
+                         alt="Mountain mining operation in Rajasthan hills" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-semibold">Aravalli Peaks</h3>
+                            <span class="bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-medium">Elite</span>
+                        </div>
+                        <p class="text-muted-foreground mb-4">Mountain-sourced quartz with unique crystalline structure, ideal for high-end applications.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-muted-foreground">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Mount Abu, Rajasthan
+                            </div>
+                            <button class="text-primary hover:text-accent transition-colors">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mine Card 6 -->
+                <div class="mine-card bg-background border border-border rounded-2xl overflow-hidden hover:border-primary reveal-up" data-category="gujarat">
+                    <!-- Gujarat industrial mining complex -->
+                    <img src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400" 
+                         alt="Modern industrial mining complex in Gujarat" 
+                         class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-semibold">Gujarat Industrial</h3>
+                            <span class="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">Premium</span>
+                        </div>
+                        <p class="text-muted-foreground mb-4">State-of-the-art processing facility with automated extraction and quality control systems.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-muted-foreground">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Ahmedabad, Gujarat
+                            </div>
+                            <button class="text-primary hover:text-accent transition-colors">
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View All Mines CTA -->
+            <div class="text-center mt-16 reveal-up">
+                <button class="btn-primary px-8 py-4 rounded-lg text-primary-foreground font-semibold text-lg">
+                    <i class="fas fa-map mr-2"></i>
+                    View All 500+ Mine Locations
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Industry Leadership -->
+    <section class="py-20">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="reveal-up">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                            Why Industry Leaders Choose <span class="text-primary">BlueHawk</span>
+                        </h2>
+                        <p class="text-xl text-muted-foreground mb-8">
+                            Our comprehensive network and quality standards have made us the trusted partner 
+                            for India's leading manufacturers and exporters.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <i class="fas fa-check-circle text-primary text-xl"></i>
+                                <span class="text-lg">Guaranteed supply chain reliability</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <i class="fas fa-check-circle text-primary text-xl"></i>
+                                <span class="text-lg">Premium grade quality assurance</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <i class="fas fa-check-circle text-primary text-xl"></i>
+                                <span class="text-lg">Competitive pricing with volume discounts</span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <i class="fas fa-check-circle text-primary text-xl"></i>
+                                <span class="text-lg">24/7 customer support and logistics</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="reveal-up">
+                        <!-- High-tech mining equipment and processing -->
+                        <img src="https://images.unsplash.com/photo-1581092162384-8987c1d64718?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                             alt="Advanced mining equipment and processing facility" 
+                             class="rounded-2xl shadow-2xl w-full">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 gradient-overlay">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-16 reveal-up">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                        Ready to <span class="text-primary">Partner</span> with Us?
+                    </h2>
+                    <p class="text-xl text-muted-foreground">
+                        Join India's leading industries that trust BlueHawk Group for their quartz requirements.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12">
+                    <!-- Contact Form -->
+                    <div class="reveal-up">
+                        <div class="bg-card border border-border rounded-2xl p-8">
+                            <h3 class="text-2xl font-semibold mb-6">Request a Quote</h3>
+                            <form class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Company Name</label>
+                                    <input type="text" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="Your company name" data-mock="true">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Contact Person</label>
+                                    <input type="text" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="Full name" data-mock="true">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Email Address</label>
+                                    <input type="email" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent" placeholder="email@company.com" data-mock="true">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Quartz Requirements</label>
+                                    <textarea rows="4" class="w-full px-4 py-3 bg-input border border-border rounded-lg focus:ring-2 focus:ring-ring focus:border-transparent resize-none" placeholder="Describe your specific requirements, volume, and timeline" data-mock="true"></textarea>
+                                </div>
+                                <button type="submit" class="btn-primary w-full py-4 rounded-lg text-primary-foreground font-semibold text-lg">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Submit Inquiry
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="reveal-up space-y-8">
+                        <div class="bg-card border border-border rounded-2xl p-8">
+                            <h3 class="text-2xl font-semibold mb-6">Get in Touch</h3>
+                            
+                            <div class="space-y-6">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-building text-primary-foreground"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">Headquarters</h4>
+                                        <p class="text-muted-foreground" data-mock="true">BlueHawk Tower<br>Mining District, Mumbai 400001</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-phone text-primary-foreground"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">Phone</h4>
+                                        <p class="text-muted-foreground" data-mock="true">+91 22 1234 5678</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-envelope text-primary-foreground"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">Email</h4>
+                                        <p class="text-muted-foreground" data-mock="true">info@bluehawkgroup.in</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-clock text-primary-foreground"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold mb-1">Business Hours</h4>
+                                        <p class="text-muted-foreground" data-mock="true">Mon - Sat: 9:00 AM - 6:00 PM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="bg-card border border-border rounded-2xl p-8">
+                            <h4 class="text-xl font-semibold mb-4">By the Numbers</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">500+</div>
+                                    <div class="text-sm text-muted-foreground">Active Mines</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">28</div>
+                                    <div class="text-sm text-muted-foreground">Indian States</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">24/7</div>
+                                    <div class="text-sm text-muted-foreground">Operations</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-primary">ISO</div>
+                                    <div class="text-sm text-muted-foreground">Certified</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-secondary py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+                            <i class="fas fa-mountain text-background text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold">BlueHawk Group</span>
+                    </div>
+                    <p class="text-muted-foreground">India's largest quartz supplier with access to premium mines nationwide.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <div class="space-y-2">
+                        <a href="#home" class="block text-muted-foreground hover:text-primary transition-colors">Home</a>
+                        <a href="#about" class="block text-muted-foreground hover:text-primary transition-colors">About Us</a>
+                        <a href="#mines" class="block text-muted-foreground hover:text-primary transition-colors">Our Mines</a>
+                        <a href="#contact" class="block text-muted-foreground hover:text-primary transition-colors">Contact</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Services</h4>
+                    <div class="space-y-2">
+                        <div class="text-muted-foreground">Quartz Mining</div>
+                        <div class="text-muted-foreground">Processing & Refining</div>
+                        <div class="text-muted-foreground">Supply Chain Management</div>
+                        <div class="text-muted-foreground">Quality Assurance</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center hover:bg-accent transition-colors">
+                            <i class="fab fa-linkedin text-primary-foreground"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center hover:bg-accent transition-colors">
+                            <i class="fab fa-twitter text-primary-foreground"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center hover:bg-accent transition-colors">
+                            <i class="fab fa-instagram text-primary-foreground"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-border pt-8 text-center">
+                <p class="text-muted-foreground" data-mock="true">© 2024 BlueHawk Group. All rights reserved. | India's Premier Quartz Mining Solutions</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            // Loading screen and door animation
+            function initializePageLoad() {
+                const loadingScreen = document.getElementById('loadingScreen');
+                const doorContainer = document.getElementById('doorContainer');
+                
+                // Start door opening after logo display
+                setTimeout(() => {
+                    doorContainer.classList.add('open');
+                }, 2000);
+                
+                // Hide loading screen after door animation
+                setTimeout(() => {
+                    loadingScreen.classList.add('fade-out');
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 1000);
+                }, 4000);
+            }
+
+            // Scroll reveal animations
+            function initializeScrollAnimations() {
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('revealed');
+                        }
+                    });
+                }, observerOptions);
+
+                document.querySelectorAll('.reveal-up').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+
+            // Mine filtering
+            function initializeMineFilters() {
+                const filterButtons = document.querySelectorAll('[data-category]');
+                const mineCards = document.querySelectorAll('.mine-card');
+
+                filterButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const category = button.dataset.category;
+                        
+                        // Update active button
+                        filterButtons.forEach(btn => {
+                            btn.classList.remove('bg-primary', 'text-primary-foreground');
+                            btn.classList.add('bg-secondary', 'text-secondary-foreground');
+                        });
+                        button.classList.remove('bg-secondary', 'text-secondary-foreground');
+                        button.classList.add('bg-primary', 'text-primary-foreground');
+                        
+                        // Filter mine cards
+                        mineCards.forEach(card => {
+                            if (category === 'all' || card.dataset.category === category) {
+                                card.style.display = 'block';
+                                card.style.opacity = '0';
+                                setTimeout(() => {
+                                    card.style.opacity = '1';
+                                }, 100);
+                            } else {
+                                card.style.opacity = '0';
+                                setTimeout(() => {
+                                    card.style.display = 'none';
+                                }, 300);
+                            }
+                        });
+                    });
+                });
+            }
+
+            // Navbar scroll effect
+            function initializeNavbar() {
+                const navbar = document.getElementById('navbar');
+                
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 100) {
+                        navbar.classList.add('bg-background/95');
+                    } else {
+                        navbar.classList.remove('bg-background/95');
+                    }
+                });
+            }
+
+            // Initialize all functionality
+            document.addEventListener('DOMContentLoaded', () => {
+                initializePageLoad();
+                initializeScrollAnimations();
+                initializeMineFilters();
+                initializeNavbar();
+            });
+
+            // Form submission placeholder
+            document.querySelector('form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                // TODO: Implement form submission logic with backend API
+                alert('Thank you for your inquiry! Our team will contact you within 24 hours.');
+            });
+        })();
+    </script>
+</body>
+</html>

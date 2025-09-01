@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import "dotenv/config";
 
 export default defineConfig({
   plugins: [
@@ -32,6 +33,12 @@ export default defineConfig({
     fs: {
       strict: true,
       deny: ["**/.*"],
+    },
+    proxy: {
+      '/api': {
+        target: `http://localhost:${process.env.PORT || 5000}`,
+        changeOrigin: true,
+      },
     },
   },
 });
